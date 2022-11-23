@@ -10,6 +10,8 @@
 *.userosscache
 *.sln.docstates
 
+obj/*
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -348,3 +350,8 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+obj/
+dotnet/
+.vscode/
+obj/Debug/net5.0/fsharp-play.assets.cache
