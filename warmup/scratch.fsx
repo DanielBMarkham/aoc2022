@@ -1,19 +1,5 @@
 let linesExample = System.IO.File.ReadLines("warmup/example.tsv")   |> Seq.toList;;
 let fieldsExample =linesExample|>List.map(fun x->x.Split [|'\t'|])
-
-type MyCat =
-  val Name:string
-  new(?cName:string)=match cName with |Some name->{Name=name} | None->{Name="Joe"}
-
-let sendCatToVet (theCat:MyCat) = printfn "I have sent %s to the vet" theCat.Name
-
-type MyDog<'a> =
-  Name=""
-  new(newName:'a) =
-    match typeof<'a> with 
-      | "string"->{Name=newName}
-      |_->{Name="Bozo"  }
-
 type Change = {Value:string;EventDateTime:System.DateTime}
 type TIAVDEntry =
   {
@@ -50,20 +36,15 @@ let changeHistories=
       Changes=changeList
     }
     )
-let historyOfAType (xtype0:string option) =
-  match xtype0 with
-    | Some sType->changeHistories |> List.filter(fun x->x.Type=sType)
-    | None->changeHistories
- 
 
-
-
-// let historyOfATypeAndInstance (xInstance:string) (?b : string) =
-//   let records= 
-//     match b with 
-//       |Some (Value = typeName: string;) -> historyOfAType typeName
-//       |None->changeHistories
-//   records |> List.filter(fun x->x.Attribute=xInstance)
+let allEntities=changeHistories
+let entitiesByName name = changeHistories |> List.filter(fun x->x.Type=name)
+let specificEntity name identifier = entitiesByName name |> List.filter(fun x->x.Instance=identifier)
+let valueChangedBetween (dtFrom:System.DateTime) (dtTo:System.DateTime)=
+  let hasChangeInsideDateRange=allEntities|>List.filter(fun x->x.Changes|>List.exists(fun y->y.EventDateTime>dtFrom && y.EventDateTime<dtTo))
+  let getMinChangeDateForAnItem (item:TIAVDHistoryItem) = (item.Changes |> List.minBy(fun k->k.EventDateTime)).EventDateTime
+  let ret=hasChangeInsideDateRange |> List.sortBy (fun z->getMinChangeDateForAnItem z)
+  ret
 // EAV or EAV/CR
 // Decided that Type Instance Attribute Value datetime was all that was required
 // It's a logging question!
