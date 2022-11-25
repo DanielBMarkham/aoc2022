@@ -1,0 +1,17 @@
+Type	Entity	Attribute	Value	Time
+Light	HallLight	State	On	5:00
+Customer	42761	Name	Joe Smith	2021-07-01
+Customer	47761	Name	Amit Zapta	2021-07-01
+Customer	56761	Name	Farak Boheme	2021-07-01
+Customer	61612	Name	Miley Cyrus	2021-07-01
+Customer	67765	Name	Elmo Mustard	2021-07-01
+Customer	43321	Name	Professor Plum	2021-07-01
+Customer	42761	Name	Joe Jones	2022-01-15
+Customer	32409	Age	27	2001-01-15
+Customer	09345	Name	Joe Smith	1997-10-05
+Customer	23853	City	Burbank	2001-11-11
+Customer	56761	Age	15
+Customer	12345	City	Oslo	2011-05-30
+Customer	61612	Name	Whitney Houston	1995-06-06
+Customer	23853	Name	Oscar Wilde	1900-07-07
+Transaction	47761	CanceledCheck	Joes Pool Hall	04-14-1944
