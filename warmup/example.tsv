@@ -1,4 +1,4 @@
-Type	Entity	Attribute	Value	Time
+Type	Entity	Attribute	Value	EventTime
 Light	HallLight	State	On	5:00
 Customer	42761	Name	Joe Smith	2021-07-01
 Customer	47761	Name	Amit Zapta	2021-07-01

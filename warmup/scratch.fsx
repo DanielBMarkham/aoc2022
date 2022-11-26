@@ -1,50 +1,49 @@
-let linesExample = System.IO.File.ReadLines("warmup/example.tsv")   |> Seq.toList;;
-let fieldsExample =linesExample|>List.map(fun x->x.Split [|'\t'|])
-type Change = {Value:string;EventDateTime:System.DateTime}
-type TIAVDEntry =
-  {
-    Type: string
-    Instance: string
-    Attribute:string
-    Initial:Change
-  }
-type TIAVDHistoryItem = 
-  {
-    Type: string
-    Instance: string
-    Attribute:string
-    Changes: Change list
-  }
-type TIAVDHistoryList = TIAVDHistoryItem list
-let processedLines = 
-  List.choose id (fieldsExample |> List.map(fun eachLine->
-    try 
-      Some {Type=eachLine[0];Instance=eachLine[1];Attribute=eachLine[2];Initial={Value=eachLine[3];EventDateTime=System.DateTime.Parse eachLine[4]}}
-      with _-> None
-  ))
-let sortedIncoming=processedLines |> List.sortBy(fun x->x.Type+x.Instance+x.Attribute)
-
-let groupByTrackedItem = sortedIncoming|>List.groupBy(fun x->x.Type+x.Instance+x.Attribute)
-let changeHistories=
-  groupByTrackedItem|>List.map(fun x->
-    let firstItemInGroup=(snd x)[0]
-    let changeList=(snd x) |> List.map(fun y->{Value=y.Initial.Value;EventDateTime=y.Initial.EventDateTime}) |> List.sortBy(fun z->z.EventDateTime)
-    {
-      Type= firstItemInGroup.Type
-      Instance= firstItemInGroup.Instance
-      Attribute=firstItemInGroup.Attribute
-      Changes=changeList
-    }
+let getRecordsFrom fileName = System.IO.File.ReadLines(fileName)   |> Seq.toList |>List.map(fun x->x.Split [|'\t'|]) |> List.filter(fun x->x.Length>=5);;
+let allRecords = getRecordsFrom "warmup/example.tsv";;
+let allTypes (incomingRecords:string[] list) : string[] list = incomingRecords|>List.filter(fun x->x[0].Length>0)
+let allEntities (incomingRecords:string[] list) : string[] list = incomingRecords|>List.filter(fun x->x[1].Length>0)
+let allAttributes (incomingRecords:string[] list) : string[] list = incomingRecords|>List.filter(fun x->x[2].Length>0)
+let allValues (incomingRecords:string[] list) : string[] list = incomingRecords|>List.filter(fun x->x[3].Length>0)
+let allEventTimes (incomingRecords:string[] list) : string[] list = 
+  incomingRecords|>List.filter(fun x->
+    (x[4].Length>0) && (fst (System.DateTime.TryParse(x[4])) =true)
     )
+let eventsBeforeADate (dt:System.DateTime) (incomingRecords:string[] list):string[] list=
+  incomingRecords|>allEventTimes|>List.filter(fun x->
+    try
+      System.DateTime.Parse(x[4])<dt
+    with _->false
+  )
+let eventsAfterADate (dt:System.DateTime) (incomingRecords:string[] list):string[] list=
+  incomingRecords|>allEventTimes|>List.filter(fun x->
+    try
+      System.DateTime.Parse(x[4])>dt
+    with _->false
+  )
+let eventsBetweenDates (dtFrom:System.DateTime) (dtTo:System.DateTime) (incomingRecords:string[] list):string[] list=
+  incomingRecords|>allEventTimes|>eventsAfterADate dtFrom|>eventsBeforeADate dtTo
+let typesMatching (sMatchingPattern:string) (incomingRecords:string[] list): string[] list=
+  let matchRegex=System.Text.RegularExpressions.Regex(sMatchingPattern)
+  incomingRecords|>allTypes|>List.filter(fun x->matchRegex.IsMatch x[0])
+let entitiesMatching (sMatchingPattern:string) (incomingRecords:string[] list): string[] list=
+  let matchRegex=System.Text.RegularExpressions.Regex(sMatchingPattern)
+  incomingRecords|>allEntities|>List.filter(fun x->matchRegex.IsMatch x[1])
+let attributesMatching (sMatchingPattern:string) (incomingRecords:string[] list): string[] list=
+  let matchRegex=System.Text.RegularExpressions.Regex(sMatchingPattern)
+  incomingRecords|>allAttributes|>List.filter(fun x->matchRegex.IsMatch x[2])
+let valuesMatching (sMatchingPattern:string) (incomingRecords:string[] list): string[] list=
+  let matchRegex=System.Text.RegularExpressions.Regex(sMatchingPattern)
+  incomingRecords|>allValues|>List.filter(fun x->matchRegex.IsMatch x[3])
+let eventTimesMatching (sMatchingPattern:string) (incomingRecords:string[] list): string[] list=
+  let matchRegex=System.Text.RegularExpressions.Regex(sMatchingPattern)
+  incomingRecords|>allEventTimes|>List.filter(fun x->matchRegex.IsMatch x[4])
 
-let allEntities=changeHistories
-let entitiesByName name = changeHistories |> List.filter(fun x->x.Type=name)
-let specificEntity name identifier = entitiesByName name |> List.filter(fun x->x.Instance=identifier)
-let valueChangedBetween (dtFrom:System.DateTime) (dtTo:System.DateTime)=
-  let hasChangeInsideDateRange=allEntities|>List.filter(fun x->x.Changes|>List.exists(fun y->y.EventDateTime>dtFrom && y.EventDateTime<dtTo))
-  let getMinChangeDateForAnItem (item:TIAVDHistoryItem) = (item.Changes |> List.minBy(fun k->k.EventDateTime)).EventDateTime
-  let ret=hasChangeInsideDateRange |> List.sortBy (fun z->getMinChangeDateForAnItem z)
-  ret
+type PrettyPrintOptions = |ByType=0|ByInstance=1|ByAttribute=2|ByValue=3
+let prettyPrint (opt:PrettyPrintOptions) (incomingRecords:string[] list) =
+  incomingRecords|>List.sortBy(fun x->(x[int opt]))
+    |>List.iter(fun x->printf "%A" x)
+  ()
+
 // EAV or EAV/CR
 // Decided that Type Instance Attribute Value datetime was all that was required
 // It's a logging question!
