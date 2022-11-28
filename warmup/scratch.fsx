@@ -61,7 +61,8 @@ type dateChunkSizes =
   |Hour
   |Day
   |Week 
-  |Month 
+  |Month
+  |Year 
   |CustomNumberOfMinutes of int
 let reduceTimeSpanToChunkNumber (beginDateTime:System.DateTime) (chunkSize:dateChunkSizes) (dateTimeToIndex:System.DateTime) =
   let timePassedSinceStart =dateTimeToIndex.Subtract beginDateTime
@@ -69,15 +70,19 @@ let reduceTimeSpanToChunkNumber (beginDateTime:System.DateTime) (chunkSize:dateC
     |Minute->timePassedSinceStart.Minutes
     |Hour->timePassedSinceStart.Hours
     |Day->timePassedSinceStart.Days
-    |Week->dateTimeToIndex.Day%7
+    |Week->dateTimeToIndex.Day/7
     |Month->dateTimeToIndex.Year + dateTimeToIndex.Month
+    |Year->dateTimeToIndex.Year
     |CustomNumberOfMinutes minuteChunkSize->
       int timePassedSinceStart.TotalMinutes % minuteChunkSize
 let groupByTimePeriod (chunkSizes:dateChunkSizes) (incomingRecords:string[] list) =
   let earliestRecord = (incomingRecords|>valueFirstChanged)[4]
   let earliestTime=System.DateTime.Parse(earliestRecord)
-  incomingRecords|>List.map(fun x->((reduceTimeSpanToChunkNumber earliestTime chunkSizes System.DateTime.Parse(x[4])),x))
-      |>List.sortBy(fun x->fst x) |>List.map(fun x->snd x)
+  let recordsSortedByDate=incomingRecords|>allEventTimes|>List.sortBy(fun x->(System.DateTime.Parse(x[4])))
+  recordsSortedByDate|>allEventTimes|>List.map(fun x->
+    ((reduceTimeSpanToChunkNumber earliestTime chunkSizes (System.DateTime.Parse(x[4])),x))
+    )
+  //    |>List.sortBy(fun x->fst x)// |>List.map(fun x->snd x)
   //incomingRecords
 type PrettyPrintOptions = |ByType=0|ByInstance=1|ByAttribute=2|ByValue=3
 let prettyPrint (opt:PrettyPrintOptions) (incomingRecords:string[] list) =
