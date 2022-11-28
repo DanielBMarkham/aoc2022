@@ -74,7 +74,7 @@ let reduceTimeSpanToChunkNumber (beginDateTime:System.DateTime) (chunkSize:dateC
     |Month->dateTimeToIndex.Year + dateTimeToIndex.Month
     |Year->dateTimeToIndex.Year
     |CustomNumberOfMinutes minuteChunkSize->
-      int timePassedSinceStart.TotalMinutes % minuteChunkSize
+      int timePassedSinceStart.TotalMinutes / minuteChunkSize
 let groupByTimePeriod (chunkSizes:dateChunkSizes) (incomingRecords:string[] list) =
   let earliestRecord = (incomingRecords|>valueFirstChanged)[4]
   let earliestTime=System.DateTime.Parse(earliestRecord)
