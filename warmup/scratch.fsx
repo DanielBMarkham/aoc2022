@@ -1,7 +1,10 @@
-// Composable Lenses On The Data
-
+// EAV or EAV/CR
+// Decided that Type Instance Attribute Value datetime was all that was required
+// This is at heart a logging problem
 let getRecordsFrom fileName = System.IO.File.ReadLines(fileName)   |> Seq.toList |>List.map(fun x->x.Split [|'\t'|]) |> List.filter(fun x->x.Length>=5);;
 let allRecords = getRecordsFrom "warmup/example.tsv";;
+
+// Composable Lenses On The Data. Simple lenses first, then composed lenses
 let allTypes (incomingRecords:string[] list) : string[] list = incomingRecords|>List.filter(fun x->x[0].Length>0)
 let allEntities (incomingRecords:string[] list) : string[] list = incomingRecords|>List.filter(fun x->x[1].Length>0)
 let allAttributes (incomingRecords:string[] list) : string[] list = incomingRecords|>List.filter(fun x->x[2].Length>0)
@@ -12,16 +15,10 @@ let allEventTimes (incomingRecords:string[] list) : string[] list =
     )
 let eventsBeforeADate (dt:System.DateTime) (incomingRecords:string[] list):string[] list=
   incomingRecords|>allEventTimes|>List.filter(fun x->
-    try
-      System.DateTime.Parse(x[4])<dt
-    with _->false
-  )
+    try System.DateTime.Parse(x[4])<dt with _->false)
 let eventsAfterADate (dt:System.DateTime) (incomingRecords:string[] list):string[] list=
   incomingRecords|>allEventTimes|>List.filter(fun x->
-    try
-      System.DateTime.Parse(x[4])>dt
-    with _->false
-  )
+    try System.DateTime.Parse(x[4])>dt with _->false)
 let eventsBetweenDates (dtFrom:System.DateTime) (dtTo:System.DateTime) (incomingRecords:string[] list):string[] list=
   incomingRecords|>allEventTimes|>eventsAfterADate dtFrom|>eventsBeforeADate dtTo
 let typesMatching (sMatchingPattern:string) (incomingRecords:string[] list): string[] list=
@@ -57,13 +54,7 @@ let valueLastChanged(incomingRecords:string[] list):string[]  =
   incomingRecords |> allValues |> allEventTimes |> List.head
 
 type dateChunkSizes = 
-  |Minute
-  |Hour
-  |Day
-  |Week 
-  |Month
-  |Year 
-  |CustomNumberOfMinutes of int
+  |Minute  |Hour  |Day  |Week   |Month  |Year   |CustomNumberOfMinutes of int
 let reduceTimeSpanToChunkNumber (beginDateTime:System.DateTime) (chunkSize:dateChunkSizes) (dateTimeToIndex:System.DateTime) =
   let timePassedSinceStart =dateTimeToIndex.Subtract beginDateTime
   match chunkSize with
@@ -82,19 +73,15 @@ let groupByTimePeriod (chunkSizes:dateChunkSizes) (incomingRecords:string[] list
   recordsSortedByDate|>allEventTimes|>List.map(fun x->
     ((reduceTimeSpanToChunkNumber earliestTime chunkSizes (System.DateTime.Parse(x[4])),x))
     )
-  //    |>List.sortBy(fun x->fst x)// |>List.map(fun x->snd x)
-  //incomingRecords
+// For later. Might add some nice text output options
 type PrettyPrintOptions = |ByType=0|ByInstance=1|ByAttribute=2|ByValue=3
 let prettyPrint (opt:PrettyPrintOptions) (incomingRecords:string[] list) =
   incomingRecords|>List.sortBy(fun x->(x[int opt]))
     |>List.iter(fun x->printf "%A" x)
   ()
 
-// EAV or EAV/CR
-// Decided that Type Instance Attribute Value datetime was all that was required
-// It's a logging question!
 
-// Tools to make sample data
+// SAMPLE DATA CREATION TOOLS
 
 let pickRandomListItem (arr:List<'a>) =
   let r=new System.Random()
