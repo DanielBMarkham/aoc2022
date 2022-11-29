@@ -115,3 +115,13 @@ let pickRandomRecord5() sFrom sTo =
 let randomizedLogProblem5 sFrom sTo =Seq.initInfinite(fun index->pickRandomRecord5() sFrom sTo)
 
 //System.IO.File.WriteAllLines("warmup/example4.tsv", foo |> Seq.take 300)
+
+// Stuff for essay
+type CardSuit = |Hearts|Diamonds|Spades|Clubs 
+let CardSuits =[Hearts;Diamonds;Spades;Clubs]
+type CardRank = |Ace|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Jack|Queen|King
+let CardRanks= [Ace;Two;Three;Four;Five;Six;Seven;Eight;Nine;Ten;Jack;Queen;King]
+type PlayingCard = {Suit:CardSuit; Rank:CardRank}
+let playingDeck=CardRanks|> List.collect (fun x -> CardSuits |> List.map (fun y-> x, y));;
+
+
