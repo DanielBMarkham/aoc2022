@@ -160,3 +160,4 @@ let convertCardsToDisplayString (cards:(CardSuit*CardRank) seq):string=
   let ret=new System.Text.StringBuilder(104)
   cards|>Seq.iter(fun x->ret.Append(lookupCardUnicode x) |>ignore)
   string ret
+  
