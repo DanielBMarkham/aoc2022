@@ -124,3 +124,7 @@ let CardRanks= [Ace;Two;Three;Four;Five;Six;Seven;Eight;Nine;Ten;Jack;Queen;King
 type PlayingCard = {Suit:CardSuit; Rank:CardRank}
 let playingDeck=CardRanks|> List.collect (fun x -> CardSuits |> List.map (fun y-> x, y));;
 
+let deal numHands handSize cards =
+  let rnd=System.Random()
+  let shuffledCards=cards |> List.sortBy(fun _ ->rnd.Next(1,52))
+  ((shuffledCards|>List.chunkBySize handSize |> Seq.take numHands), (shuffledCards|>Seq.skip (numHands*handSize)))
