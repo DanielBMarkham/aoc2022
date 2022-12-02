@@ -65,17 +65,18 @@ let problem1GameScores = prob1 |> List.map(fun (a,b)->scoreGame a b)
 
 let pickSecondHandGivenDesiredOutput (firstHand:GameToken) (desiredOutcome:GameOutcome)=
   match firstHand,desiredOutcome with 
-    |Rock,Win->Scissors
-    |Rock,Lose->Paper
+    |Rock,Win->Paper
+    |Rock,Lose->Scissors
     |Rock,Draw->Rock 
     |Paper,Win->Scissors
     |Paper,Lose->Rock 
     |Paper,Draw->Paper 
-    |Scissors, Win->Paper
-    |Scissors,Lose ->Rock
+    |Scissors, Win->Rock
+    |Scissors,Lose ->Paper
     |Scissors,Draw->Scissors
 
 let problem2Game=prob2|>List.map(fun (x,y)->(x, pickSecondHandGivenDesiredOutput x y))
 let example2=ex2|>List.map(fun (x,y)->(x, pickSecondHandGivenDesiredOutput x y))
 //ex1 |> List.map(fun (x,y)->scoreGame x y)|>List.sumBy(fun x->fst x);;
 //problem1GameScores|> List.map(fun (x,y)->scoreGame x y)|>List.sumBy(fun x->fst x);;
+let secondscore=problem2Game |> List.map(fun (x,y)->scoreGame x y)|>List.sumBy(fun x->snd x)
