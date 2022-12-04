@@ -42,3 +42,5 @@ let step2Problem2=step1Problem2|>List.map(fun x->x|>Seq.cast<char>)|>List.map(fu
 let problem2Score=step2Problem2|>List.map(fun x->toElfCode x)|>List.sum;;
 
 let prob2Score=linesProblem2|>List.chunkBySize 3 |> List.map(fun x->x|>List.map(fun y->(y.ToCharArray()) |>Set.ofArray) ) |> List.map(fun x->x |> Seq.reduce Set.intersect ) |>List.map(fun x->x|>Seq.cast<char>)|>List.map(fun x->(x|>List.ofSeq).Head)|>List.map(fun x->toElfCode x)|>List.sum;;
+
+
