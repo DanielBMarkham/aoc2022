@@ -98,11 +98,21 @@ let makeIntoDirectoryFileSizeList incoming =
   |>List.map(fun x->x|>List.map(fun (a,b)->a,getFileName (File b),getFileSize (File b)))
   |> List.concat
 
+let getDirectoriesToSumUp incoming =
+  let tempList=makeIntoDirectoryFileSizeList incoming
+  let ret=
+    tempList
+      |>List.map(fun (a,b,c)->
+        (a,tempList|>(List.filter(fun (x,y,z)->x.Contains a))|>List.append [(a,b,c)]))
+  ret|>List.map(fun (x,y)->x)
+    //|>List.filter(fun x->snd x<=100000)
+    //|>List.concat
+    
 let directoriesAndTotalSizes incoming =
   let tempList=makeIntoDirectoryFileSizeList incoming
   tempList
-    |>List.map(fun (a,b,c)->(a,tempList|>List.filter(fun (x,y,z)->x.Contains a)|>List.sumBy(fun (x,y,z)->z)))
-    |>List.distinct
+    |>List.map(fun (a,b,c)->(a,tempList|>(List.filter(fun (x,y,z)->x.Contains a))|>List.append [(a,b,c)]|>List.sumBy(fun (x,y,z)->z)))
+    //|>List.distinct
 
 
 let example1 = directoriesAndTotalSizes linesExample|>List.filter(fun x->snd x<=100000)|>List.sumBy(fun x->snd x)
@@ -111,3 +121,4 @@ let printTestDirs=foo|>List.map(fun x->fst x)
 let printSubDirs (dir:string)=printTestDirs|>(List.filter(fun x->x.Contains dir))|>List.append [dir]
 
 //printSubDirs "/cmvqf/dcgbjvddnclwtgccnrqwzphrvqwnjssmwcn/cqdzdnq/"
+// NEED TO WRITE A LENS FOR LOOKING AT A DIRECTORY OR FILES IN A DIRECTORY
