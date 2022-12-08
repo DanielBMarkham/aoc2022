@@ -7,7 +7,6 @@ let splitBy f input =
   let i = ref 0
   input
   |> Seq.groupBy (fun x ->
-    //if f x then incr i
     if f x then (i.Value<-i.Value+1)
     i.Value)
   |> Seq.map snd
@@ -29,7 +28,6 @@ let rowsAndColumns (arr:'a [,]) x y =
   [(lookLeft arr x y); (lookRight arr x y); (LookUp arr x y); (LookDown arr x y)];
 let example1IncomingData=array2D (linesExample|>List.map(fun x->x|>List.ofSeq|>List.map(fun y-> int (string y)))) 
 let problem11IncomingData=array2D (linesProblem1|>List.map(fun x->x|>List.ofSeq|>List.map(fun y-> int (string y)))) 
-//getNeighbor<int> foo 1 1;;
 
 let insideGrid (grid:'a [,]) = 
   let rightSide=grid|>Array2D.length1
@@ -51,9 +49,47 @@ let canBeSeenFromOutside (grid:int [,]) x y =
 
 let viewingScore (grid:int [,]) x y =
   let valToCompare= grid[x,y]
-  [(lookLeft grid x y);(lookRight grid x y);(LookUp grid x y);(LookDown grid x y)]
+  let toRight = (lookRight grid x y) |>List.ofArray
+  let toLeft =(lookLeft grid x y)|>Array.rev |>List.ofArray
+  let toUp=(LookUp grid x y) |>Array.rev |>List.ofArray 
+  let toDown=(LookDown grid x y) |>List.ofArray
+  [toLeft;toRight;toUp;toDown]
 
 let example1TruthGrid =example1IncomingData |> Array2D.mapi(fun i j x-> (canBeSeenFromOutside example1IncomingData i  j) ) |>Seq.cast<bool> |>Seq.map(fun x->x)
 let problem1TruthGrid =problem11IncomingData |> Array2D.mapi(fun i j x-> (canBeSeenFromOutside problem11IncomingData i  j) ) |>Seq.cast<bool> |>Seq.map(fun x->x)
 
+let getViewFrom x y =
+  let valToCompare= example1IncomingData[x,y]
+  let temp=viewingScore example1IncomingData x y
+  
+  let smallerTrees =temp|>List.map(fun x->
+      let lis1=(x|>List.takeWhile(fun (y: int)->y<valToCompare))
+      let lis2=
+        if lis1.Length=x.Length
+          then []
+          else (x|> List.skipWhile(fun y->y<valToCompare)|>List.truncate 1)
+      List.append lis1 lis2      
+    )
+  let treeViewCount = smallerTrees|>List.map(fun x->x.Length)
+  let score=
+    treeViewCount|>List.fold(fun acc x->if (x<>0) then x*acc else acc) 1
+  ()
+let scoreView (grid:int [,]) x y =
+  let valToCompare= grid[x,y]
+  let temp=viewingScore grid x y
+  
+  let smallerTrees =temp|>List.map(fun x->
+      let lis1=(x|>List.takeWhile(fun (y: int)->y<valToCompare))
+      let lis2=
+        if lis1.Length=x.Length
+          then []
+          else (x|> List.skipWhile(fun y->y<valToCompare)|>List.truncate 1)
+      List.append lis1 lis2      
+    )
+  let treeViewCount = smallerTrees|>List.map(fun x->x.Length)
+  let score=
+    treeViewCount|>List.fold(fun acc x->if (x<>0) then x*acc else acc) 1
+  score
 
+//example1IncomingData|> Array2D.mapi(fun i j x->scoreView example1IncomingData i j);;
+//problem11IncomingData|> Array2D.mapi(fun i j x->scoreView problem11IncomingData i j);;
