@@ -49,6 +49,10 @@ let canBeSeenFromOutside (grid:int [,]) x y =
   let highestToBottom = try valToCompare > ((LookDown grid x y) |> List.ofArray |> List.max) with _->true
   highestToLeft || highestToRight || highestToTop || highestToBottom
 
+let viewingScore (grid:int [,]) x y =
+  let valToCompare= grid[x,y]
+  [(lookLeft grid x y);(lookRight grid x y);(LookUp grid x y);(LookDown grid x y)]
+
 let example1TruthGrid =example1IncomingData |> Array2D.mapi(fun i j x-> (canBeSeenFromOutside example1IncomingData i  j) ) |>Seq.cast<bool> |>Seq.map(fun x->x)
 let problem1TruthGrid =problem11IncomingData |> Array2D.mapi(fun i j x-> (canBeSeenFromOutside problem11IncomingData i  j) ) |>Seq.cast<bool> |>Seq.map(fun x->x)
 
