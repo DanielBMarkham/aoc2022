@@ -1,7 +1,7 @@
 // HOUSEKEEPING/COMMON
-let linesExample = System.IO.File.ReadLines("day9/example.txt")   |> Seq.toList;;
-let linesProblem1 = System.IO.File.ReadLines("day9/problem1.txt")   |> Seq.toList;;
-let linesProblem2 = System.IO.File.ReadLines("day9/problem2.txt")   |> Seq.toList;;
+let linesExample = System.IO.File.ReadLines("dayX/example.txt")   |> Seq.toList;;
+let linesProblem1 = System.IO.File.ReadLines("dayX/problem1.txt")   |> Seq.toList;;
+let linesProblem2 = System.IO.File.ReadLines("dayX/problem2.txt")   |> Seq.toList;;
 
 let splitBy f input =
   let i = ref 0
