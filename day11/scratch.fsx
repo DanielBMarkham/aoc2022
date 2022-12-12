@@ -218,7 +218,8 @@ printfn "bar %A " bar
 
 // PART 2
 // EVERY NUMBER CAN BE EXPRESSED AS A QUAD: a base, a base to a certain power, a base times a mulitplier, and a remainder
-//(a,b,c,d) a^b +a*c +d
+//(a,b,c,d) a^b *a*c +d
 // using this notation (and the binomial/trinomial theorm) you can avoid bigints and still do all the elf work
-
+// adding and subtracting changes d. Once d passes a, c increases and d becomes the remainder. Once d goes through zero, a is added, c decreased, and d becomes the positive result
+// same goes for multiplication. multiplying increase c. once c reaches the size of a, b increases and c is the remainder. Division is the reverse
 //
