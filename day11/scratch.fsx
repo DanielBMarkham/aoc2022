@@ -216,3 +216,9 @@ let bar=(snd foo)|>List.sort|>List.rev
 
 printfn "bar %A " bar
 
+// PART 2
+// EVERY NUMBER CAN BE EXPRESSED AS A QUAD: a base, a base to a certain power, a base times a mulitplier, and a remainder
+//(a,b,c,d) a^b +a*c +d
+// using this notation (and the binomial/trinomial theorm) you can avoid bigints and still do all the elf work
+
+//
