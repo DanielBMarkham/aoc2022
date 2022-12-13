@@ -68,3 +68,10 @@ let pointToPoints (myWorld:char [,]) (myPoint:int*int) =
     let ret =pointsICanGoTo myWorld myPoint
     ret |>List.map(fun x->snd x)
 
+type  Tree =
+  |Leaf of (int*int)
+  |Branch of Tree
+  |Terminal
+
+
+let rec growTree (existingTree:Tree) (treeToAdd:Tree) = 
