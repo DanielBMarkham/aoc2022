@@ -48,3 +48,27 @@ let find2D needle (arr: 'a [,]) =
           else go (x+1) y
     go 0 0
 
+
+
+let parseIntoPaths (linesInput:string list) = 
+  linesInput 
+  |> List.map(fun x->
+    x.Split("->")
+      |>List.ofArray 
+      |> (List.windowed 2)
+      |>List.map(fun y->
+        y|>List.map(fun y->
+          let tupeUp=y.Split([|','|])
+          (int tupeUp[0], int tupeUp[1])
+        )
+      )
+    )
+  |>List.map(fun x->x|>List.map(fun y->(y[0],y[1])))
+
+let example1Paths=parseIntoPaths linesExample
+let problem1Paths=parseIntoPaths linesProblem1
+
+
+
+
+
