@@ -68,10 +68,20 @@ let pointToPoints (myWorld:char [,]) (myPoint:int*int) =
     let ret =pointsICanGoTo myWorld myPoint
     ret |>List.map(fun x->snd x)
 
-type  Tree =
-  |Leaf of (int*int)
-  |Branch of Tree
-  |Terminal
+type PointPath =
+  |Win 
+  |Tree of (int*int)*PointPath list;;
+let moo=Tree(
+    ((0,0),[
+      Tree((0,1),[])
+      ;Tree((1,0),[])
+      ]));;
 
 
-let rec growTree (existingTree:Tree) (treeToAdd:Tree) = 
+//      ((1,0),[])
+//      ]);;
+// FSI DOES NOT KEEP THE RECURSIVE TYPE AROUND OR UPDATE IT
+// SO IT CAN LOOK LIKE YOU'RE WORKING WITH A NEW TYPE BUT NO
+
+let pop()= printfn "%A " moo;;
+
