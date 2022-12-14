@@ -1,7 +1,7 @@
 // HOUSEKEEPING/COMMON
-let linesExample = System.IO.File.ReadLines("day12/example.txt")   |> Seq.toList;;
-let linesProblem1 = System.IO.File.ReadLines("day12/problem1.txt")   |> Seq.toList;;
-let linesProblem2 = System.IO.File.ReadLines("day12/problem2.txt")   |> Seq.toList;;
+let linesExample = System.IO.File.ReadLines("day/example.txt")   |> Seq.toList;;
+let linesProblem1 = System.IO.File.ReadLines("day/problem1.txt")   |> Seq.toList;;
+let linesProblem2 = System.IO.File.ReadLines("day/problem2.txt")   |> Seq.toList;;
 
 let splitBy f input =
   let i = ref 0
@@ -47,41 +47,4 @@ let find2D needle (arr: 'a [,]) =
           elif arr.[x,y] = needle   then Some (x,y)
           else go (x+1) y
     go 0 0
-
-let foo=linesExample |> stringListToCharArray |> Array2D.map(fun x->if x='S'then 'a' else x) |> Array2D.map(fun x->if x='E' then 'z' else x)
-
-let pointsICanGoTo (myWorld:char [,]) (myPoint:int*int) = 
-  //printfn "I am looking at point %A. It is a %A" myPoint myWorld[fst myPoint,snd myPoint]
-  let pointsAndCoordinatesAroundMe=getRowColumnPointsAndCoordinatesSurroundingAPoint<char> myWorld myPoint
-  printfn "point coords around me %A" pointsAndCoordinatesAroundMe
-  let ret= if pointsAndCoordinatesAroundMe.Length>0 then   pointsAndCoordinatesAroundMe|>List.filter(fun x->int (fst x)<=(int (fst x)+1)) else []
-  //printfn "Points that match the height criteria %A" ret
-  ret
-
-let isPointWinner charA = charA='z'
-
-let pointToPoints (myWorld:char [,]) (myPoint:int*int) = 
-  if isPointWinner (myWorld[fst myPoint,snd myPoint])
-  then []
-  else 
-    let temp=pointsICanGoTo myWorld myPoint
-    let ret =pointsICanGoTo myWorld myPoint
-    ret |>List.map(fun x->snd x)
-
-type PointPath =
-  |Win 
-  |Tree of (int*int)*PointPath list;;
-let moo=Tree(
-    ((0,0),[
-      Tree((0,1),[])
-      ;Tree((1,0),[])
-      ]));;
-
-
-//      ((1,0),[])
-//      ]);;
-// FSI DOES NOT KEEP THE RECURSIVE TYPE AROUND OR UPDATE IT
-// SO IT CAN LOOK LIKE YOU'RE WORKING WITH A NEW TYPE BUT NO
-
-let pop()= printfn "%A " moo;;
 
