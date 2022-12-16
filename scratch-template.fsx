@@ -41,10 +41,10 @@ let getRowColumnPointsAndCoordinatesSurroundingAPoint<'a> (myWorld:'a [,]) (myPo
 
 
 let find2D needle (arr: 'a [,]) = 
-    let rec go x y =
-          if   y >= arr.GetLength 1 then None
-          elif x >= arr.GetLength 0 then go 0 (y+1)
-          elif arr.[x,y] = needle   then Some (x,y)
-          else go (x+1) y
-    go 0 0
+  let rec go x y =
+        if   y >= arr.GetLength 1 then None
+        elif x >= arr.GetLength 0 then go 0 (y+1)
+        elif arr.[x,y] = needle   then Some (x,y)
+        else go (x+1) y
+  go 0 0
 

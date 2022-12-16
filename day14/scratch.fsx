@@ -70,5 +70,20 @@ let problem1Paths=parseIntoPaths linesProblem1
 
 
 
+type CaveCell= |Air|Rock|Sand
+let playGrid (inputLines:string list) = 
+  let paths=parseIntoPaths(inputLines)
+  let biggestX (paths:((int*int)*(int*int)) list list ):int =
+    (fst (paths|>List.concat|>List.map(fun (a,b)->[a;b])|>List.concat|>List.maxBy(fun (a,b)->a)))
+  let biggestY (paths:((int*int)*(int*int)) list list ):int =
+    snd (paths|>List.concat|>List.map(fun (a,b)->[a;b])|>List.concat|>List.maxBy(fun (a,b)->b))
+  let maxX=biggestX paths
+  let maxY=biggestY paths 
+  let playingGrid=Array2D.create (maxX + 1) (maxY + 1) Air
+  playingGrid
+  
+  
+
+
 
 
