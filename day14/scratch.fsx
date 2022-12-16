@@ -82,8 +82,28 @@ let playGrid (inputLines:string list) =
   let playingGrid=Array2D.create (maxX + 1) (maxY + 1) Air
   playingGrid
   
-  
+let pathPointsToFilledGrid (myWorld:'a [,]) (itemToAdd:'a) (endPoints:((int*int)*(int*int))) =
+  let beginPoint = fst endPoints 
+  let endPoint = snd endPoints
+  let flipPairToMinfirst (a,b)= if b<a then (b,a) else (a,b)
+  let rangeToMap =
+    match (fst beginPoint = fst endPoint), (snd beginPoint = snd endPoint) with
+      | false,false -> []
+      | true, true->[]
+      | false, true->
+        let orderPair=flipPairToMinfirst(fst beginPoint, fst endPoint)
+        [fst orderPair..snd orderPair] |>List.map(fun x-> (x,snd endPoint))
+      | true,false->
+        let orderPair=flipPairToMinfirst(snd beginPoint, snd  endPoint)
+        [fst orderPair..snd orderPair] |>List.map(fun x-> (fst endPoint, x))
+  let addPoint i j (theWorld) (thingToAdd:'a)=
+    theWorld|>Array2D.mapi(fun x y z->if (i=x) && (j=y) then thingToAdd else z)
+  printfn "range to map %A" rangeToMap
+  rangeToMap|>List.fold(fun acc x->(addPoint (fst x) (snd x) acc itemToAdd)) myWorld
+
+
+let foo= Array2D.init 7 7 (fun i j->Air)
 
 
 
-
+#r "System.Windows.Forms"
