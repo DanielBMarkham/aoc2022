@@ -106,4 +106,3 @@ let foo= Array2D.init 7 7 (fun i j->Air)
 
 
 
-#r "System.Windows.Forms"
